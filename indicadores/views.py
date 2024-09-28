@@ -31,10 +31,10 @@ def upload_and_generate_indicators(request):
         df = procesar_excel(file)
         print(df.head())  # Verificar el contenido del DataFrame
         all_indicators = {
-            'Diarios': indicadores_por_dia(df),
-            'Semanales': indicadores_por_semana(df),
-            'Mensuales': indicadores_por_mes(df),
-            'Anuales': indicadores_por_anio(df),
+            'Dia': indicadores_por_dia(df),
+            'Semana': indicadores_por_semana(df),
+            'Mes': indicadores_por_mes(df),
+            'Anio': indicadores_por_anio(df),
         }
         
         # Generar el archivo Excel con los indicadores
