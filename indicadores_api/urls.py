@@ -15,11 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from indicadores.views import upload_excel, upload_form
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('upload/', upload_form, name='upload_form'),
-    path('api/upload/', upload_excel, name='upload_excel'), # Ruta para procesar el archivo
+    path('upload/', upload_form, name='upload_form'),  # Formulario de subida
+    path('api/upload/', upload_excel, name='upload_excel'),  # Ruta para procesar el archivo
+    path('api/', include('indicadores.urls')),  # Incluye rutas de la app indicadores
 ]
