@@ -7,6 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 import pandas as pd
 import os
 from .utils import procesar_excel, indicadores_por_dia, indicadores_por_semana, indicadores_por_mes, indicadores_por_anio, generar_excel
+from django.contrib.auth.models import User 
+from rest_framework import generics
+from .serializers import UserSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -154,3 +157,59 @@ def generar_indicadores(request):
         return response
 
     return JsonResponse({'error': 'Método no permitido. Usa POST.'}, status=405)
+
+# Nueva vista para generar otros indicadores
+@csrf_exempt
+@api_view(['POST'])
+def ordenes_mes(request):
+    logger.info("Received request to generate monthly orders indicators.")
+    
+    if 'file' not in request.FILES:
+        return JsonResponse({'error': 'No file provided'}, status=400)
+    
+    file = request.FILES['file']
+    
+    try:
+        # Procesar el archivo Excel y generar otros indicadores
+        df = procesar_excel(file)
+        # Aquí puedes agregar la lógica para generar los nuevos indicadores
+        other_indicators = {
+            'Mensuales': indicadores_por_mes(df),  # Ejemplo
+        }
+        
+        # Generar el archivo Excel con los nuevos indicadores
+        output_file = generar_excel(other_indicators)
+
+        # Guardar temporalmente el archivo en el servidor (directorio temporal)
+        file_path = os.path.join(TEMP_DIR, 'ordenes_mes_generados.xlsx')
+        with open(file_path, 'wb') as f:
+            f.write(output_file)
+
+        # Renderizar la plantilla con la URL de descarga
+        download_url = request.build_absolute_uri('/api/download_ordenes_mes/')
+        return render(request, 'download_file.html', {'download_url': download_url})
+
+    except Exception as e:
+        logger.error(f"Error processing file: {str(e)}")
+        return JsonResponse({"error": f"Error processing file: {str(e)}"}, status=500)
+
+# Nueva vista para descargar el archivo de otros indicadores
+@csrf_exempt
+def download_ordenes_mes_file(request):
+    file_path = os.path.join(TEMP_DIR, 'ordenes_mes_generados.xlsx')
+
+    try:
+        with open(file_path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="ordenes_mes_generados.xlsx"'
+            return response
+    except FileNotFoundError:
+        return JsonResponse({'error': 'File not found'}, status=404)
+    
+    
+    # indicadores/views.py
+
+
+class UserCreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
