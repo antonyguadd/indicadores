@@ -16,15 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from indicadores.views import upload_excel, upload_form, UserCreate
+from indicadores.views import upload_excel, upload_and_generate_indicators, download_file, ordenes_mes, download_ordenes_mes_file, UserCreate
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', UserCreate.as_view(), name='user_register'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('upload/', upload_form, name='upload_form'),  # Formulario de subida
-    path('api/upload/', upload_excel, name='upload_excel'),  # Ruta para procesar el archivo
-    path('api/', include('indicadores.urls')),  # Incluye rutas de la app indicadores
+    path('api/upload/', upload_excel, name='upload_excel'),
+    path('api/upload_and_generate/', upload_and_generate_indicators, name='upload_and_generate'),
+    path('api/download/', download_file, name='download_file'),
+    path('api/ordenes_mes/', ordenes_mes, name='ordenes_mes'),
+    path('api/download_ordenes_mes/', download_ordenes_mes_file, name='download_ordenes_mes_file'),
+    path('api/register/', UserCreate.as_view(), name='register'),
 ]
