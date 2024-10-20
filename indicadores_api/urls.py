@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from indicadores.views import upload_excel, upload_and_generate_indicators, download_file, ordenes_mes, download_ordenes_mes_file, UserCreate
+from indicadores.views.vistas_dia import upload_excel, upload_and_generate_indicators, download_file, UserCreate
+from indicadores.views.vistas_mes import upload_excel_mes, upload_and_generate_monthly_indicators, download_file_mes
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -26,7 +27,13 @@ urlpatterns = [
     path('api/upload/', upload_excel, name='upload_excel'),
     path('api/upload_and_generate/', upload_and_generate_indicators, name='upload_and_generate'),
     path('api/download/', download_file, name='download_file'),
-    path('api/ordenes_mes/', ordenes_mes, name='ordenes_mes'),
-    path('api/download_ordenes_mes/', download_ordenes_mes_file, name='download_ordenes_mes_file'),
     path('api/register/', UserCreate.as_view(), name='register'),
+    # Ruta para subir el archivo Excel
+    path('api/upload_mes/', upload_excel_mes, name='upload_excel_mes'),
+
+    # Ruta para procesar el archivo y generar indicadores mensuales
+    path('api/generate_monthly_indicators/', upload_and_generate_monthly_indicators, name='generate_monthly_indicators'),
+
+    # Ruta para descargar el archivo Excel generado con indicadores mensuales
+    path('api/download_mes/', download_file_mes, name='download_file_mes'),
 ]
