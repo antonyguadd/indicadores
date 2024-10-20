@@ -74,11 +74,11 @@ def generar_excel_mes(indicadores):
         crear_hoja_indicadores(writer, workbook, 'Indicadores por Mes', indicadores, image_path)
 
         # Crear otras hojas con diferentes indicadores
-        crear_hoja_resumen_semanal(writer, workbook, 'RESUMEN SEMANAL')
-        crear_hoja_suspendidas(writer, workbook, 'SUSPENDIDAS')
-        crear_hoja_estatus_atencion(writer, workbook, 'ESTATUS DE ATENCION')
-        crear_hoja_reporte_tiempo_instalacion(writer, workbook, 'REPORTE TIEMPO DE INSTALACION')
-        crear_hoja_promedio_instalacion(writer, workbook, 'PROMEDIO DE INSTALACION')
+        #crear_hoja_resumen_semanal(writer, workbook, 'RESUMEN SEMANAL')
+        #crear_hoja_suspendidas(writer, workbook, 'SUSPENDIDAS')
+        #crear_hoja_estatus_atencion(writer, workbook, 'ESTATUS DE ATENCION')
+        #crear_hoja_reporte_tiempo_instalacion(writer, workbook, 'REPORTE TIEMPO DE INSTALACION')
+        #crear_hoja_promedio_instalacion(writer, workbook, 'PROMEDIO DE INSTALACION')
 
     output.seek(0)
     return output.getvalue()
