@@ -218,3 +218,4 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "https://indicadores-j38s5y32b-antonyguads-projects.vercel.app",
 ]
+
