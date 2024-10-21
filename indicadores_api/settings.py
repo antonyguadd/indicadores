@@ -216,5 +216,5 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # URL de tu frontend Next.js
+    "https://indicadores-j38s5y32b-antonyguads-projects.vercel.app",
 ]
