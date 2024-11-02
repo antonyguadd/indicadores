@@ -19,6 +19,7 @@ from django.urls import path, include
 from indicadores.views.vistas_dia import upload_excel, upload_and_generate_indicators, download_file, UserCreate
 from indicadores.views.vistas_mes import upload_excel_mes, upload_and_generate_monthly_indicators, download_file_mes
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from indicadores.views.vistas_reportes import upload_excel_report, upload_and_generate_report_indicators, download_file_report
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,4 +37,11 @@ urlpatterns = [
 
     # Ruta para descargar el archivo Excel generado con indicadores mensuales
     path('api/download_mes/', download_file_mes, name='download_file_mes'),
+    
+    # Rutas para reportes
+    path('api/upload_report/', upload_excel_report, name='upload_excel_report'),
+    path('api/generate_report_indicators/', upload_and_generate_report_indicators, name='generate_report_indicators'),
+    path('api/download_report/', download_file_report, name='download_file_report'),
+    
+
 ]
