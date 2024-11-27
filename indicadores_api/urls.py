@@ -20,6 +20,7 @@ from indicadores.views.vistas_dia import upload_excel, upload_and_generate_indic
 from indicadores.views.vistas_mes import upload_excel_mes, upload_and_generate_monthly_indicators, download_file_mes
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from indicadores.views.vistas_reportes import upload_excel_report, upload_and_generate_report_indicators, download_file_report
+from indicadores.views.vistas_suspendidas import upload_excel_suspendidas, upload_and_generate_report_suspendidas, download_suspendidas_report
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,4 +45,7 @@ urlpatterns = [
     path('api/download_report/', download_file_report, name='download_file_report'),
     
 
+    path('upload_suspendidas/', upload_excel_suspendidas, name='upload_excel_suspendidas'),
+    path('generate_suspendidas_report/', upload_and_generate_report_suspendidas, name='upload_and_generate_report_suspendidas'),
+    path('download_suspendidas_report/', download_suspendidas_report, name='download_suspendidas_report'),
 ]

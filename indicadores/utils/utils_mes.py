@@ -94,9 +94,6 @@ def crear_hoja_indicadores(writer, workbook, sheet_name, indicadores, image_path
     # Insertar imagen
     worksheet.insert_image('A3', image_path, {'x_scale': 1, 'y_scale': 1.5})
 
-    # Escribir el DataFrame a la hoja de Excel
-    indicadores.to_excel(writer, index=False, sheet_name=sheet_name, startrow=10)
-
     # Definir formatos
     header_format = workbook.add_format({
         'bold': True,
@@ -153,11 +150,22 @@ def crear_hoja_indicadores(writer, workbook, sheet_name, indicadores, image_path
     if current_service is not None:
         worksheet.merge_range(merge_start_row, 0, len(indicadores) + start_row - 1, 0, current_service, cell_format)
 
+    # Agregar sección de "QUEJAS" con valores en 0
+    quejas_start_row = len(indicadores) + start_row
+    worksheet.merge_range(quejas_start_row, 0, quejas_start_row + 2, 0, 'QUEJAS', cell_format)
+    worksheet.write(quejas_start_row, 1, 'ASIGNACION', cell_format)
+    worksheet.write(quejas_start_row + 1, 1, 'CERRADAS', cell_format)
+    worksheet.write(quejas_start_row + 2, 1, 'TECNICOS', cell_format)
+    for col_num in range(2, len(indicadores.columns)):
+        worksheet.write(quejas_start_row, col_num, 0, cell_format)
+        worksheet.write(quejas_start_row + 1, col_num, 0, cell_format)
+        worksheet.write(quejas_start_row + 2, col_num, 0, cell_format)
+
     # Ajustar el ancho de las columnas
     worksheet.set_column(0, len(indicadores.columns) - 1, 20)
 
     # Aplicar bordes a todo el rango de datos
-    last_row = len(indicadores) + start_row + 1  # Fila donde termina el contenido
+    last_row = quejas_start_row + 2  # Fila donde termina el contenido
     last_col = len(indicadores.columns) - 1  # Última columna (0-indexed)
     worksheet.conditional_format(start_row, 0, last_row, last_col, {
         'type': 'no_blanks',
@@ -235,7 +243,39 @@ def crear_hoja_indicadores(writer, workbook, sheet_name, indicadores, image_path
     # Ajustar el ancho de las columnas para la tabla de totales
     worksheet.set_column(0, len(total_asignaciones_por_dia) + 1, 20)
 
-    # Crear gráficos de columnas agrupadas
+    # Crear nuevas tablas con valores en 0 y fechas reconocidas
+    nuevas_tablas_start_row = totales_start_row + 7
+    worksheet.write(nuevas_tablas_start_row, 0, '08:00 A.M.', header_format)
+    worksheet.write(nuevas_tablas_start_row, 1, 'TECNICOS', header_format)
+    for col_num, dia in enumerate(total_asignaciones_por_dia.index, start=2):
+        worksheet.write(nuevas_tablas_start_row, col_num, dia, header_format)
+    worksheet.write(nuevas_tablas_start_row + 1, 0, 'INICIO DE PRIMER ORDEN', cell_format)
+    worksheet.write(nuevas_tablas_start_row + 1, 1, 'INICIO', cell_format)
+    for col_num in range(2, len(total_asignaciones_por_dia) + 2):
+        worksheet.write(nuevas_tablas_start_row + 1, col_num, 0, cell_format)
+    worksheet.write(nuevas_tablas_start_row + 2, 1, 'PENDIENTE', cell_format)
+    for col_num in range(2, len(total_asignaciones_por_dia) + 2):
+        worksheet.write(nuevas_tablas_start_row + 2, col_num, 0, cell_format)
+    worksheet.write(nuevas_tablas_start_row + 3, 1, '%', cell_format)
+    for col_num in range(2, len(total_asignaciones_por_dia) + 2):
+        worksheet.write(nuevas_tablas_start_row + 3, col_num, '0%', cell_format)
+
+    worksheet.write(nuevas_tablas_start_row + 5, 0, '12:00 P.M.', header_format)
+    worksheet.write(nuevas_tablas_start_row + 5, 1, 'TECNICOS', header_format)
+    for col_num, dia in enumerate(total_asignaciones_por_dia.index, start=2):
+        worksheet.write(nuevas_tablas_start_row + 5, col_num, dia, header_format)
+    worksheet.write(nuevas_tablas_start_row + 6, 0, 'CIERRE DE PRIMER ORDEN', cell_format)
+    worksheet.write(nuevas_tablas_start_row + 6, 1, 'CERRADA', cell_format)
+    for col_num in range(2, len(total_asignaciones_por_dia) + 2):
+        worksheet.write(nuevas_tablas_start_row + 6, col_num, 0, cell_format)
+    worksheet.write(nuevas_tablas_start_row + 7, 1, 'PENDIENTE', cell_format)
+    for col_num in range(2, len(total_asignaciones_por_dia) + 2):
+        worksheet.write(nuevas_tablas_start_row + 7, col_num, 0, cell_format)
+    worksheet.write(nuevas_tablas_start_row + 8, 1, '%', cell_format)
+    for col_num in range(2, len(total_asignaciones_por_dia) + 2):
+        worksheet.write(nuevas_tablas_start_row + 8, col_num, '0%', cell_format)
+
+    # Mover las gráficas debajo de las nuevas tablas
     chart1 = workbook.add_chart({'type': 'column'})
     chart1.add_series({
         'name': 'Asignación',
@@ -250,7 +290,7 @@ def crear_hoja_indicadores(writer, workbook, sheet_name, indicadores, image_path
     chart1.set_title({'name': 'Asignación vs Cerradas'})
     chart1.set_x_axis({'name': 'Día'})
     chart1.set_y_axis({'name': 'Cantidad'})
-    worksheet.insert_chart(totales_start_row + 5, 0, chart1, {'x_scale': 1.5, 'y_scale': 1.5})
+    worksheet.insert_chart(nuevas_tablas_start_row + 10, 0, chart1, {'x_scale': 1.5, 'y_scale': 1.5})
 
     chart2 = workbook.add_chart({'type': 'column'})
     chart2.add_series({
@@ -261,7 +301,7 @@ def crear_hoja_indicadores(writer, workbook, sheet_name, indicadores, image_path
     chart2.set_title({'name': 'Cerradas'})
     chart2.set_x_axis({'name': 'Día'})
     chart2.set_y_axis({'name': 'Cantidad'})
-    worksheet.insert_chart(totales_start_row + 5, 10, chart2, {'x_scale': 1.5, 'y_scale': 1.5})
+    worksheet.insert_chart(nuevas_tablas_start_row + 10, 10, chart2, {'x_scale': 1.5, 'y_scale': 1.5})
 
 def crear_hoja_resumen_semanal(writer, workbook, sheet_name):
     worksheet = workbook.add_worksheet(sheet_name)
